@@ -40,6 +40,9 @@ public class PartidaXadrez {
 		if(!tabuleiro.thereIsAPiece(posicao)) {
 			throw new ChessException("Posicao nao esta no tabuleiro!");
 		}
+		if(!tabuleiro.peca(posicao).existeMovimentoPossivel()) {
+			throw new ChessException("Nao existe movimentos possiveis para a peca!");
+		}
 	}
 	
 	private Peca fazerMovimento(Posicao origem, Posicao destino) {
