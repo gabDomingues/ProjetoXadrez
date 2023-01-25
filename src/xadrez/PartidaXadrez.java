@@ -24,6 +24,7 @@ public class PartidaXadrez {
 	
 	private boolean check;
 	private boolean checkMate;
+	private PecaXadrez vuneravel;
 	
 	private List<Peca> pecasTabuleiro = new ArrayList<>();
 	private List<Peca> pecasCapturadas = new ArrayList<>();
@@ -63,6 +64,10 @@ public class PartidaXadrez {
 		return mat;
 	}
 	
+	public PecaXadrez getVuneravel() {
+		return vuneravel;
+	}
+	
 	public boolean[][] movimentosPossivel(PosicaoXadrez posicaoOrigem){
 		Posicao posicao = posicaoOrigem.toPosition();
 		validarPosicaoOrigem(posicao);
@@ -82,11 +87,22 @@ public class PartidaXadrez {
 			throw new ChessException("Voce nao pode se colocar em check");
 		}
 		
+		PecaXadrez pecaMovida = (PecaXadrez)tabuleiro.peca(destino); 
+		
 		check = (testCheck(oponente(jogadorAtual))) ? true : false;
 		if( testCheckMate(oponente(jogadorAtual))) {
 			checkMate = true; 
 		} else {
 			nextTurn();			
+		}
+		
+		//en Passant
+		if(pecaMovida instanceof Peao && (destino.getLinha() == origem.getLinha() - 2 ||
+				pecaMovida instanceof Peao && (destino.getLinha() == origem.getLinha() + 2))) {
+			vuneravel = pecaMovida;
+		}
+		else {
+			vuneravel = null;
 		}
 		
 		return (PecaXadrez) pecaCapturada;
@@ -139,6 +155,22 @@ public class PartidaXadrez {
 			torre.increaseContMov();
 		}
 		
+		//#en passant
+		if(p instanceof Peao) {
+			if(origem.getColuna() != destino.getColuna() && pecaCapturada == null) {
+				Posicao posicaoPeao;
+				if(p.getCor() == Cor.BRANCO) {
+					posicaoPeao = new Posicao(destino.getLinha() + 1, destino.getColuna());
+				}
+				else {
+					posicaoPeao = new Posicao(destino.getLinha() - 1, destino.getColuna());
+				}
+				pecaCapturada = tabuleiro.removerPeca(posicaoPeao);
+				pecasCapturadas.add(pecaCapturada);
+				pecasTabuleiro.remove(pecaCapturada);
+			}
+		}
+		
 		return pecaCapturada;
 	}
 	
@@ -169,6 +201,23 @@ public class PartidaXadrez {
 			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(destinoT);
 			tabuleiro.colocarPeca(torre, origemT);
 			torre.decreaseContMov();
+		}
+		
+		//#en passant
+		if(p instanceof Peao) {
+			if(origem.getColuna() != destino.getColuna() && pecaCapturada == vuneravel) {
+				PecaXadrez peao = (PecaXadrez)tabuleiro.removerPeca(destino);
+				Posicao posicaoPeao;
+				if(p.getCor() == Cor.BRANCO) {
+					posicaoPeao = new Posicao(3, destino.getColuna());
+				}
+				else {
+					posicaoPeao = new Posicao(4, destino.getColuna());
+				}
+				tabuleiro.colocarPeca(peao, posicaoPeao);
+				
+			
+			}
 		}
 		
 		
@@ -238,14 +287,14 @@ public class PartidaXadrez {
 		placeNewPiece('a', 1, new Torre(tabuleiro, Cor.BRANCO));
         placeNewPiece('h', 1,new Torre(tabuleiro, Cor.BRANCO));
         placeNewPiece('e', 1, new Rei(tabuleiro, Cor.BRANCO, this));
-        placeNewPiece('a', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('b', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('c', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('d', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('e', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('f', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('g', 2, new Peao(tabuleiro, Cor.BRANCO));
-        placeNewPiece('h', 2, new Peao(tabuleiro, Cor.BRANCO));
+        placeNewPiece('a', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('b', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('c', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('d', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('e', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('f', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('g', 2, new Peao(tabuleiro, Cor.BRANCO, this));
+        placeNewPiece('h', 2, new Peao(tabuleiro, Cor.BRANCO, this));
         placeNewPiece('c', 1, new Bispo(tabuleiro, Cor.BRANCO));
         placeNewPiece('f', 1, new Bispo(tabuleiro, Cor.BRANCO));
         placeNewPiece('b', 1, new Cavalo(tabuleiro, Cor.BRANCO));
@@ -256,14 +305,14 @@ public class PartidaXadrez {
         placeNewPiece('a', 8, new Torre(tabuleiro, Cor.PRETO));
         placeNewPiece('h', 8, new Torre(tabuleiro, Cor.PRETO));
         placeNewPiece('e', 8, new Rei(tabuleiro, Cor.PRETO, this));
-        placeNewPiece('a', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('b', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('c', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('d', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('e', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('f', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('g', 7, new Peao(tabuleiro, Cor.PRETO));
-        placeNewPiece('h', 7, new Peao(tabuleiro, Cor.PRETO));
+        placeNewPiece('a', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('b', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('c', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('d', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('e', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('f', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('g', 7, new Peao(tabuleiro, Cor.PRETO, this));
+        placeNewPiece('h', 7, new Peao(tabuleiro, Cor.PRETO, this));
         placeNewPiece('c', 8, new Bispo(tabuleiro, Cor.PRETO));
         placeNewPiece('f', 8, new Bispo(tabuleiro, Cor.PRETO));
         placeNewPiece('b', 8, new Cavalo(tabuleiro, Cor.PRETO));
