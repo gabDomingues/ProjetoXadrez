@@ -44,7 +44,12 @@ public class Program {
 				
 				if(partida.getPromovido() != null) {
 					System.out.println("Digite peca para promover (B/C/D/T): ");
-					String tipo = sc.nextLine();
+					String tipo = sc.nextLine().toUpperCase();
+					while (!tipo.equals("B") && !tipo.equals("C") && !tipo.equals("T") && !tipo.equals("D")) {
+						System.out.println("Invalido!");
+						System.out.println("Digite peca para promover (B/C/D/T): ");
+						tipo = sc.nextLine().toUpperCase();
+					}
 					partida.trocarPecaPromovida(tipo);
 				}
 			}
