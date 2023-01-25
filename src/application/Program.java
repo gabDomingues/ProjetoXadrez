@@ -40,6 +40,13 @@ public class Program {
 				if(pecaCapturada != null) {
 					capturada.add(pecaCapturada);
 				}
+				
+				
+				if(partida.getPromovido() != null) {
+					System.out.println("Digite peca para promover (B/C/D/T): ");
+					String tipo = sc.nextLine();
+					partida.trocarPecaPromovida(tipo);
+				}
 			}
 			catch(ChessException e) {
 				System.out.println(e.getMessage());
@@ -48,6 +55,7 @@ public class Program {
 			catch(InputMismatchException e) {
 				System.out.println(e.getMessage());
 				sc.nextLine();
+
 			}
 		}
 		UI.clearScreen();

@@ -1,6 +1,7 @@
 package xadrez;
 
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class PartidaXadrez {
 	private boolean check;
 	private boolean checkMate;
 	private PecaXadrez vuneravel;
+	private PecaXadrez promovido;
 	
 	private List<Peca> pecasTabuleiro = new ArrayList<>();
 	private List<Peca> pecasCapturadas = new ArrayList<>();
@@ -51,6 +53,10 @@ public class PartidaXadrez {
 	
 	public boolean getCheckMate() {
 		return checkMate;
+	}
+	
+	public PecaXadrez getPromovido() {
+		return promovido;
 	}
 	
 	public PecaXadrez[][] getPecas(){
@@ -89,6 +95,16 @@ public class PartidaXadrez {
 		
 		PecaXadrez pecaMovida = (PecaXadrez)tabuleiro.peca(destino); 
 		
+		//promocao
+		promovido = null;
+		if(pecaMovida instanceof Peao) {
+			if( pecaMovida.getCor() == Cor.BRANCO && destino.getLinha() == 0 || 
+					pecaMovida.getCor() == Cor.PRETO && destino.getLinha() == 7 ) {
+				promovido = (PecaXadrez)tabuleiro.peca(destino);
+				promovido = trocarPecaPromovida("D");
+			}
+		}
+		
 		check = (testCheck(oponente(jogadorAtual))) ? true : false;
 		if( testCheckMate(oponente(jogadorAtual))) {
 			checkMate = true; 
@@ -106,6 +122,33 @@ public class PartidaXadrez {
 		}
 		
 		return (PecaXadrez) pecaCapturada;
+	}
+	
+	public PecaXadrez trocarPecaPromovida(String tipo) {
+		if(promovido == null) {
+			throw new IllegalStateException("Nao tem peca a ser promovida!");
+		}
+		if (!tipo.equals("B") && !tipo.equals("C") && !tipo.equals("T") && !tipo.equals("D")) {
+			throw new InvalidParameterException("Tipo invalido para promocao");
+		}
+		
+		Posicao pos = promovido.getPosicaoXadrez().toPosition(); 
+		Peca p = tabuleiro.removerPeca(pos);
+		pecasTabuleiro.remove(p);
+		
+		PecaXadrez novaPeca = novaPeca(tipo, promovido.getCor());
+		tabuleiro.colocarPeca(novaPeca, pos);
+		pecasTabuleiro.add(novaPeca);
+		
+		return novaPeca;
+	}
+	
+	private PecaXadrez novaPeca(String tipo, Cor cor) {
+		if( tipo.equals("B")) return new Bispo(tabuleiro, cor);
+		if( tipo.equals("C")) return new Cavalo(tabuleiro, cor);
+		if( tipo.equals("D")) return new Dama(tabuleiro, cor);
+		return new Torre(tabuleiro, cor);
+		
 	}
 	
 	private void validarPosicaoOrigem(Posicao posicao) {
