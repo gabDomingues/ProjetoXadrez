@@ -121,6 +121,24 @@ public class PartidaXadrez {
 			pecasCapturadas.add(pecaCapturada);
 		}
 		
+		//#Roque pequeno
+		if(p instanceof Rei && destino.getColuna() == origem.getColuna() + 2) {
+			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() + 3);
+			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() + 1);
+			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(origemT);
+			tabuleiro.colocarPeca(torre, destinoT);
+			torre.increaseContMov();
+		}
+		
+		//#Roque grande
+		if(p instanceof Rei && destino.getColuna() == origem.getColuna() - 2) {
+			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() - 4);
+			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() - 1);
+			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(origemT);
+			tabuleiro.colocarPeca(torre, destinoT);
+			torre.increaseContMov();
+		}
+		
 		return pecaCapturada;
 	}
 	
@@ -134,6 +152,26 @@ public class PartidaXadrez {
 			pecasCapturadas.remove(pecaCapturada);
 			pecasTabuleiro.add(pecaCapturada);
 		}
+		
+		//#Roque pequeno
+		if(p instanceof Rei && destino.getColuna() == origem.getColuna() + 2) {
+			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() + 3);
+			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() + 1);
+			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(destinoT);
+			tabuleiro.colocarPeca(torre, origemT);
+			torre.decreaseContMov();
+		}
+		
+		//#Roque grande
+		if(p instanceof Rei && destino.getColuna() == origem.getColuna() - 2) {
+			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() - 4);
+			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() - 1);
+			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(destinoT);
+			tabuleiro.colocarPeca(torre, origemT);
+			torre.decreaseContMov();
+		}
+		
+		
 	}
 	
 	private Cor oponente(Cor cor) {
@@ -199,7 +237,7 @@ public class PartidaXadrez {
 		
 		placeNewPiece('a', 1, new Torre(tabuleiro, Cor.BRANCO));
         placeNewPiece('h', 1,new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('e', 1, new Rei(tabuleiro, Cor.BRANCO));
+        placeNewPiece('e', 1, new Rei(tabuleiro, Cor.BRANCO, this));
         placeNewPiece('a', 2, new Peao(tabuleiro, Cor.BRANCO));
         placeNewPiece('b', 2, new Peao(tabuleiro, Cor.BRANCO));
         placeNewPiece('c', 2, new Peao(tabuleiro, Cor.BRANCO));
@@ -211,13 +249,13 @@ public class PartidaXadrez {
         placeNewPiece('c', 1, new Bispo(tabuleiro, Cor.BRANCO));
         placeNewPiece('f', 1, new Bispo(tabuleiro, Cor.BRANCO));
         placeNewPiece('b', 1, new Cavalo(tabuleiro, Cor.BRANCO));
-        placeNewPiece('g', 1, new Bispo(tabuleiro, Cor.BRANCO));
+        placeNewPiece('g', 1, new Cavalo(tabuleiro, Cor.BRANCO));
         placeNewPiece('d', 1, new Dama(tabuleiro, Cor.BRANCO));
 
         
         placeNewPiece('a', 8, new Torre(tabuleiro, Cor.PRETO));
         placeNewPiece('h', 8, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('e', 8, new Rei(tabuleiro, Cor.PRETO));
+        placeNewPiece('e', 8, new Rei(tabuleiro, Cor.PRETO, this));
         placeNewPiece('a', 7, new Peao(tabuleiro, Cor.PRETO));
         placeNewPiece('b', 7, new Peao(tabuleiro, Cor.PRETO));
         placeNewPiece('c', 7, new Peao(tabuleiro, Cor.PRETO));
