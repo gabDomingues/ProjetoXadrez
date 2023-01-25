@@ -19,6 +19,7 @@ public class PartidaXadrez {
 	private Tabuleiro tabuleiro;
 	
 	private boolean check;
+	private boolean checkMate;
 	
 	private List<Peca> pecasTabuleiro = new ArrayList<>();
 	private List<Peca> pecasCapturadas = new ArrayList<>();
@@ -41,6 +42,10 @@ public class PartidaXadrez {
 	
 	public boolean getCheck() {
 		return check;
+	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
 	}
 	
 	public PecaXadrez[][] getPecas(){
@@ -74,8 +79,12 @@ public class PartidaXadrez {
 		}
 		
 		check = (testCheck(oponente(jogadorAtual))) ? true : false;
+		if( testCheckMate(oponente(jogadorAtual))) {
+			checkMate = true; 
+		} else {
+			nextTurn();			
+		}
 		
-		nextTurn();
 		return (PecaXadrez) pecaCapturada;
 	}
 	
@@ -149,6 +158,32 @@ public class PartidaXadrez {
 		return false;
 	}
 	
+	private boolean testCheckMate(Cor cor) {
+		if(!testCheck(cor)) {
+			return false;
+		}
+		List<Peca> list = pecasTabuleiro.stream().filter(x -> ((PecaXadrez)x).getCor() == cor).collect(Collectors.toList());
+		
+		for(Peca p : list) {
+			boolean[][] mat = p.movimentosPossivel();
+			for(int i = 0; i < tabuleiro.getLinhas(); i++) {
+				for(int j = 0; j < tabuleiro.getColunas(); j++) {
+					if(mat[i][j]) {
+						Posicao origem = ((PecaXadrez)p).getPosicaoXadrez().toPosition();
+						Posicao destino = new Posicao(i,j);
+						Peca pecaCapturada = fazerMovimento(origem, destino);
+						boolean testCheck = testCheck(cor);
+						desfazerMovimento(origem, destino, pecaCapturada);
+						if(!testCheck) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	private void placeNewPiece(char coluna, int linha, PecaXadrez peca) {
 		tabuleiro.colocarPeca(peca, new PosicaoXadrez(coluna, linha).toPosition());
 		pecasTabuleiro.add(peca);
@@ -156,18 +191,12 @@ public class PartidaXadrez {
 	
 	private void setupInicial() {
 		
-		placeNewPiece('c', 1, new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('c', 2,new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('d', 2, new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('e', 2, new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('e', 1, new Torre(tabuleiro, Cor.BRANCO));
-        placeNewPiece('d', 1, new Rei(tabuleiro, Cor.BRANCO));
-        placeNewPiece('c', 7, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('c', 8, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('d', 7, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('e', 7, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('e', 8, new Torre(tabuleiro, Cor.PRETO));
-        placeNewPiece('d', 8, new Rei(tabuleiro, Cor.PRETO));
+		placeNewPiece('h', 7, new Torre(tabuleiro, Cor.BRANCO));
+        placeNewPiece('d', 1,new Torre(tabuleiro, Cor.BRANCO));
+        placeNewPiece('e', 1, new Rei(tabuleiro, Cor.BRANCO));
+        
+        placeNewPiece('b', 8, new Torre(tabuleiro, Cor.PRETO));
+        placeNewPiece('a', 8, new Rei(tabuleiro, Cor.PRETO));
 		}
 	
 	private void nextTurn() {

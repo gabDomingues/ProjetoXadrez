@@ -20,7 +20,7 @@ public class Program {
 		List<PecaXadrez> capturada = new ArrayList<>();
 		
 		
-		while(true) {
+		while(!partida.getCheckMate()) {
 			try {
 				UI.clearScreen();
 				UI.printPartida(partida, capturada);
@@ -50,6 +50,8 @@ public class Program {
 				sc.nextLine();
 			}
 		}
+		UI.clearScreen();
+		UI.printPartida(partida, capturada);
 	}
 
 }
