@@ -123,8 +123,8 @@ public class PartidaXadrez {
 		
 		//#Roque pequeno
 		if(p instanceof Rei && destino.getColuna() == origem.getColuna() + 2) {
-			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() + 3);
-			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() + 1);
+			Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() + 3);
+			Posicao destinoT = new Posicao(origem.getLinha(), origem.getColuna() + 1);
 			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(origemT);
 			tabuleiro.colocarPeca(torre, destinoT);
 			torre.increaseContMov();
@@ -132,8 +132,8 @@ public class PartidaXadrez {
 		
 		//#Roque grande
 		if(p instanceof Rei && destino.getColuna() == origem.getColuna() - 2) {
-			Posicao origemT = new Posicao(origem.getLinha(), destino.getColuna() - 4);
-			Posicao destinoT = new Posicao(origem.getLinha(), destino.getColuna() - 1);
+			Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() - 4);
+			Posicao destinoT = new Posicao(origem.getLinha(), origem.getColuna() - 1);
 			PecaXadrez torre = (PecaXadrez)tabuleiro.removerPeca(origemT);
 			tabuleiro.colocarPeca(torre, destinoT);
 			torre.increaseContMov();
