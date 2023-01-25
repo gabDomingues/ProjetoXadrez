@@ -37,7 +37,7 @@ public class Program {
 				PosicaoXadrez destino = UI.lerPosicaoXadrez(sc);
 				
 				PecaXadrez pecaCapturada = partida.performChessMove(origem, destino);
-				if(capturada != null) {
+				if(pecaCapturada != null) {
 					capturada.add(pecaCapturada);
 				}
 			}
